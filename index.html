@@ -1,0 +1,103 @@
+import React, { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from "recharts";
+
+const weeklyDataSample = Array.from({ length: 12 }, (_, i) => ({
+  week: `${i + 1}주차`,
+  sales: Math.floor(Math.random() * 1000) + 500
+}));
+
+const channelDataSample = [
+  { name: "자사몰", value: 400 },
+  { name: "쿠팡", value: 300 },
+  { name: "네이버", value: 200 },
+  { name: "오프라인", value: 100 }
+];
+
+const productDataSample = [
+  { name: "에브리타임 밸런스", sales: 800 },
+  { name: "기타 SKU", sales: 300 }
+];
+
+export default function Dashboard() {
+  const [data] = useState(weeklyDataSample);
+
+  return (
+    <div className="p-6 grid gap-6">
+      <h1 className="text-2xl font-bold">정관장 에브리타임 밸런스 2025 대시보드</h1>
+
+      {/* KPI */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {["매출", "판매수량", "객단가", "재구매율"].map((kpi, i) => (
+          <Card key={i} className="rounded-2xl shadow">
+            <CardContent className="p-4">
+              <p className="text-sm text-gray-500">{kpi}</p>
+              <p className="text-xl font-semibold">-</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Line Chart */}
+      <Card className="rounded-2xl shadow">
+        <CardContent className="p-4">
+          <h2 className="font-semibold mb-2">주간 매출 트렌드</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={data}>
+              <XAxis dataKey="week" />
+              <YAxis />
+              <Tooltip />
+              <Line type="monotone" dataKey="sales" stroke="#8884d8" />
+            </LineChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      {/* Channel + Product */}
+      <div className="grid md:grid-cols-2 gap-6">
+        <Card className="rounded-2xl shadow">
+          <CardContent className="p-4">
+            <h2 className="font-semibold mb-2">채널별 비중</h2>
+            <ResponsiveContainer width="100%" height={250}>
+              <PieChart>
+                <Pie data={channelDataSample} dataKey="value" nameKey="name" outerRadius={80}>
+                  {channelDataSample.map((entry, index) => (
+                    <Cell key={`cell-${index}`} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-2xl shadow">
+          <CardContent className="p-4">
+            <h2 className="font-semibold mb-2">제품별 매출</h2>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={productDataSample}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="sales" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Insights */}
+      <Card className="rounded-2xl shadow">
+        <CardContent className="p-4">
+          <h2 className="font-semibold mb-2">인사이트 & 액션</h2>
+          <ul className="list-disc pl-5 text-sm text-gray-600">
+            <li>쿠팡 채널 매출 증가</li>
+            <li>프로모션 주차 매출 상승 확인</li>
+            <li>다음 주 할인 전략 테스트 필요</li>
+          </ul>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
